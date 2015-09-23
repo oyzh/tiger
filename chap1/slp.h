@@ -1,3 +1,6 @@
+#ifndef SLP_H
+#define SLP_H
+#include"util.h"
 typedef struct A_stm_ *A_stm;
 typedef struct A_exp_ *A_exp;
 typedef struct A_expList_ *A_expList;
@@ -34,3 +37,17 @@ struct A_expList_ {enum {A_pairExpList, A_lastExpList} kind;
 A_expList A_PairExpList(A_exp head, A_expList tail);
 A_expList A_LastExpList(A_exp last);
 
+
+Table_ update(Table_ t, string index, int valueble);
+int lookup(Table_ t, string key);
+Table_ interpStm(A_stm s, Table_ t);
+
+struct IntAndTable {
+  int i;
+  Table_ t;
+};
+struct IntAndTable interpExp(A_exp e, Table_ t);
+struct IntAndTable interpExps(A_expList el,Table_ t);
+//int maxargs(A_stm);
+void interp(A_stm);
+#endif

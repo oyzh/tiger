@@ -1,5 +1,5 @@
-#include "util.h"
 #include "slp.h"
+#include<stdio.h>
 
 A_stm A_CompoundStm(A_stm stm1, A_stm stm2) {
   A_stm s = checked_malloc(sizeof *s);
@@ -58,3 +58,142 @@ A_expList A_LastExpList(A_exp last) {
 
 
 
+/*Author: Zhenhuan Ouyang
+ *Data  : 09/22/2015
+ *Zhejiang University
+ */
+#include<string.h>
+#include"util.h"
+
+Table_ update(Table_ t,string index,int valueble){
+  Table_ p;
+  p = t;
+  while(p){
+    if(strcmp(index,p->id) == 0){
+      p->value = valueble;
+      return t;
+    }
+    p = p->tail;
+  }
+  p = Table(index,valueble,t);
+  return p;
+}
+
+int lookup(Table_ t,string key){
+  Table_ p;
+  p = t;
+  while(p){
+    if(strcmp(p->id,key) == 0){
+      return p->value;
+    }
+  }
+  printf("No varable:%s",key);
+  exit(0);
+}
+
+
+    
+/*
+int maxargs(A_stm stm){
+}
+*/
+struct IntAndTable interpExp(A_exp e, Table_ t){
+  struct IntAndTable itb;
+  int le,ri;
+  switch(e->kind){
+  case A_idExp:
+    itb.i = lookup(t, e->u.id);
+    itb.t = t;
+    return itb;
+    break;
+  case A_numExp:
+    itb.i = e->u.num;
+    itb.t = t;
+    return itb;
+    break;
+  case A_opExp:
+    itb = interpExp(e->u.op.left, t);
+    le = itb.i;
+    itb = interpExp(e->u.op.right, itb.t);
+    ri = itb.i;
+    {
+      switch(e->u.op.oper){
+      case A_plus:
+	itb.i = le + ri;
+	break;
+      case A_minus:
+	itb.i = le - ri;
+	break;
+      case A_times:
+	itb.i = le * ri;
+	break;
+      case A_div:
+	if(ri == 0){
+	  printf("Div 0 error!");
+	  exit(0);
+	}
+	itb.i = le / ri;
+	break;
+      }
+    }
+    return itb;
+    break;
+  case A_eseqExp:
+    t = interpStm(e->u.eseq.stm, t);
+    itb = interpExp(e->u.eseq.exp, t);
+    return itb;
+    break;
+  default:
+    break;
+  }
+  return itb;
+}
+
+struct IntAndTable interpExps(A_expList el, Table_ t){
+  struct IntAndTable itb;
+  if(el->kind == A_pairExpList){
+    itb = interpExp(el->u.pair.head, t);
+    printf("%d ",itb.i);
+    itb = interpExps(el->u.pair.tail, itb.t);
+    return itb;
+  }
+  else{
+    itb = interpExp(el->u.last,t);
+    printf("%d ",itb.i);
+    return itb;
+  }
+  return itb;
+}
+
+
+Table_ interpStm(A_stm s,Table_ t){
+  Table_ tb_;
+  struct IntAndTable itb;
+  switch(s->kind){
+  case A_compoundStm:
+    tb_ = interpStm(s->u.compound.stm1, t);
+    tb_ = interpStm(s->u.compound.stm2, tb_);
+    return tb_; 
+    break;
+  case A_assignStm:
+    itb = interpExp(s->u.assign.exp, t);
+    tb_ = itb.t;
+    tb_ = update(tb_, s->u.assign.id, itb.i);
+    return tb_;
+    break;
+  case A_printStm:
+    itb = interpExps(s->u.print.exps, t);
+    printf("\n");
+    return itb.t;
+    break;
+  default:
+    break;
+  }
+  return NULL;
+}
+
+void interp(A_stm s){
+  Table_ t;
+  t = NULL;
+  interpStm(s,t);
+}
