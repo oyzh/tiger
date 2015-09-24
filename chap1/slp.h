@@ -48,6 +48,28 @@ struct IntAndTable {
 };
 struct IntAndTable interpExp(A_exp e, Table_ t);
 struct IntAndTable interpExps(A_expList el,Table_ t);
-//int maxargs(A_stm);
+
+/********************************************************
+ *stack structure
+ *******************************************************/
+typedef struct Node{
+  int s;
+  struct Node * next;
+}Node;
+
+
+typedef struct Stack{
+  Node * top;
+}Stack;
+
+Stack * creat_stack();
+void push(Stack * S,int n);
+Node * pop(Stack * S);
+
+/******************end*********************************/
+void maxargsExp(A_exp exp,Stack *S);
+int maxargsExplist(A_expList el ,Stack *S);
+void maxargsStm(A_stm stm,Stack *S);
+int maxargs(A_stm);
 void interp(A_stm);
 #endif

@@ -91,12 +91,96 @@ int lookup(Table_ t,string key){
   exit(0);
 }
 
-
-    
-/*
-int maxargs(A_stm stm){
+Stack * creat_stack(){
+  Stack *S;
+  S = (Stack *)malloc(sizeof(Stack));
+  S->top = NULL;
+  return S;
 }
-*/
+
+void push(Stack * S,int n){
+  Node * node = (Node *)malloc(sizeof(Node));
+  node->s = n;
+  node->next = S->top;
+  S->top = node;
+}
+
+Node * pop(Stack * S){
+  Node * n;
+  if(S->top == NULL)
+    return NULL;
+  else{
+    n = S->top;
+    S->top = S->top->next;
+    return n;
+  }
+}
+
+void maxargsExp(A_exp exp,Stack* S){
+  switch(exp->kind){
+  case A_eseqExp:
+    maxargsStm(exp->u.eseq.stm,S);
+    maxargsExp(exp->u.eseq.exp,S);
+    break;
+  case A_opExp:
+    maxargsExp(exp->u.op.left,S);
+    maxargsExp(exp->u.op.right,S);
+    break;
+  default:
+    break;
+  }
+}
+
+int maxargsExplist(A_expList el ,Stack* S){
+  int sum = 0;
+  A_expList temp = el;
+  while(temp){
+    if(temp->kind == A_lastExpList){
+      maxargsExp(temp->u.last,S);
+      return 1;
+    }
+    else{
+      maxargsExp(temp->u.pair.head,S);
+      sum = 1 + maxargsExplist(temp->u.pair.tail,S);
+      return sum;
+    }
+  }
+}
+
+void maxargsStm(A_stm stm,Stack * S){
+  int n;
+  switch(stm->kind){
+  case A_compoundStm:
+    maxargsStm(stm->u.compound.stm1,S);
+    maxargsStm(stm->u.compound.stm2,S);
+    break;
+  case A_assignStm:
+    maxargsExp(stm->u.assign.exp,S);
+    break;
+  case A_printStm:
+    n = maxargsExplist(stm->u.print.exps,S);
+    push(S,n);
+    break;
+  default:
+    assert("error");
+  }
+}
+    
+int maxargs(A_stm stm){
+  Stack * S;
+  Node * t;
+  int max = 0;
+  S = creat_stack();
+  maxargsStm(stm,S);
+  t = pop(S);
+  while(t){
+    if(max < t->s)
+      max = t->s;
+    t = pop(S);
+  }
+  return max;
+}
+
 struct IntAndTable interpExp(A_exp e, Table_ t){
   struct IntAndTable itb;
   int le,ri;
