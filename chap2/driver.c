@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "util.h"
 #include "errormsg.h"
 #include "tokens.h"
@@ -25,7 +26,10 @@ string tokname(tok) {
 
 int main(int argc, char **argv) {
  string fname; int tok;
- if (argc!=2) {fprintf(stderr,"usage: a.out filename\n"); exit(1);}
+ if (argc!=2) {
+   fprintf(stderr,"usage: a.out filename\n");
+   exit(1);
+ }
  fname=argv[1];
  EM_reset(fname);
  for(;;) {
@@ -34,6 +38,7 @@ int main(int argc, char **argv) {
    switch(tok) {
    case ID: case STRING:
      printf("%10s %4d %s\n",tokname(tok),EM_tokPos,yylval.sval);
+     //   printf("%10s %4d\n",tokname(tok),EM_tokPos);
      break;
    case INT:
      printf("%10s %4d %d\n",tokname(tok),EM_tokPos,yylval.ival);
