@@ -2,7 +2,8 @@
  * symbol.h - Symbols and symbol-tables
  *
  */
-
+#ifndef SYMBOL_H
+#define SYMBOL_H
 typedef struct S_symbol_ *S_symbol;
 
 /* Make a unique symbol from a given string.  
@@ -35,3 +36,4 @@ void S_beginScope(S_table t);
    and end the current scope. */
 void S_endScope(S_table t);
 
+#endif

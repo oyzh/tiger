@@ -6,7 +6,6 @@
  */
 
 /* Type Definitions */
-
 typedef int A_pos;
 
 typedef struct A_var_ *A_var;
