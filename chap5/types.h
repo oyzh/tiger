@@ -10,7 +10,7 @@ typedef struct Ty_tyList_ *Ty_tyList;
 typedef struct Ty_field_ *Ty_field;
 typedef struct Ty_fieldList_ *Ty_fieldList;
 
-struct Ty_ty_ {enum {Ty_record, Ty_nil, Ty_int, Ty_string, Ty_array,
+struct Ty_ty_ {enum {Ty_record, Ty_nil, Ty_int, Ty_string, Ty_array,Ty_double,
 		       Ty_name, Ty_void} kind;
 	       union {Ty_fieldList record;
 		      Ty_ty array;
@@ -26,6 +26,7 @@ Ty_ty Ty_Nil(void);
 Ty_ty Ty_Int(void);
 Ty_ty Ty_String(void);
 Ty_ty Ty_Void(void);
+Ty_ty Ty_Double(void);
 
 Ty_ty Ty_Record(Ty_fieldList fields);
 Ty_ty Ty_Array(Ty_ty ty);

@@ -16,6 +16,10 @@ Ty_ty Ty_Nil(void) {return &tynil;}
 static struct Ty_ty_ tyint = {Ty_int};
 Ty_ty Ty_Int(void) {return &tyint;}
 
+static struct Ty_ty_ tydouble = {Ty_double};
+Ty_ty Ty_Double(void) {return &tydouble;}
+
+
 static struct Ty_ty_ tystring = {Ty_string};
 Ty_ty Ty_String(void) {return &tystring;}
 
